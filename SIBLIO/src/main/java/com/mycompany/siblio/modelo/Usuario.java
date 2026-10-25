@@ -62,8 +62,8 @@ public class Usuario extends Persona {
 
     @Override
     public void consultarInfo() {
-        System.out.println("Nombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + "\nCorreo:" + getCorreo()
-                + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + "\nLimite de Prestamos" +
+        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + "\nCorreo:" + getCorreo()
+                + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + "\nLimite de Prestamos:" +
                 limitePrestamos);
     }
     
