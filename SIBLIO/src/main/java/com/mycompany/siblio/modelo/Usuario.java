@@ -20,7 +20,7 @@ public class Usuario extends Persona {
     public Usuario(String tipoUsuario, String estado, int limitePrestamos, int id, String nombre, String documentoIdentidad, String correo, String telefono) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.tipoUsuario = tipoUsuario;
-        this.estado = estado;
+        this.estado = "activo";
         this.limitePrestamos = limitePrestamos;
     }
 
@@ -45,10 +45,25 @@ public class Usuario extends Persona {
     }
 
     public void setLimitePrestamos(int limitePrestamos) {
+        if(limitePrestamos<1){
+            throw new IllegalArgumentException("El limite de prestamos debe ser minimo de 1.");
+        }
         this.limitePrestamos = limitePrestamos;
     }
     
     public Prestamo solicitarPrestamo(Ejemplar ejemplar){
+        if(ejemplar==null){
+            throw new IllegalArgumentException("Debe seleccionar un ejemplar.");
+        }
+        if(!"activo".equals(estado)){
+            throw new IllegalStateException("El usuario debe estar activo para solicitar prestamos.");
+        }
+        if(prestamosActivos()>= limitePrestamos){
+            throw new IllegalStateException("El usuario alcanzó el limite de prestamos activos.");
+        }
+        if(multasPendientes()){
+            throw new IllegalStateException("El usuario cuenta con multas pendientes");
+        }
         return null;
     }
     
@@ -59,12 +74,27 @@ public class Usuario extends Persona {
     public List<Prestamo> consultarHistorial(){
         return new ArrayList<>(prestamos);
     }
+    
+    public boolean puedeSolicitarPrestamo(){
+        return "activo".equals(estado) && prestamosActivos() < limitePrestamos && !multasPendientes();
+    }
+    
+    private int prestamosActivos(){
+        return 0;
+    }
+    
+    private boolean multasPendientes(){
+        return false;
+    }
+    
+    void agregarPrestamo(Prestamo prestamo){
+        prestamos.add(prestamo);
+    }
 
     @Override
     public void consultarInfo() {
-        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + "\nCorreo:" + getCorreo()
-                + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + "\nLimite de Prestamos:" +
-                limitePrestamos);
+        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
+                "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
+                "\nLimite de Prestamos:" + limitePrestamos);
     }
-    
 }
