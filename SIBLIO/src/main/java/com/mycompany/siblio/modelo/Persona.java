@@ -44,6 +44,9 @@ public abstract class Persona {
     }
 
     public void setDocumentoIdentidad(String documentoIdentidad) {
+        if(documentoIdentidad==null || documentoIdentidad.isBlank()){
+            throw new IllegalArgumentException("El campo documento de identidad no puede estar vacio.");
+        }
         this.documentoIdentidad = documentoIdentidad;
     }
 
@@ -52,6 +55,9 @@ public abstract class Persona {
     }
 
     public void setCorreo(String correo) {
+        if(correo == null || correo.isBlank()){
+            throw new IllegalArgumentException("El campo correo no puede estar vacio.");
+        }
         this.correo = correo;
     }
 

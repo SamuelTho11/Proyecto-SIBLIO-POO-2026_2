@@ -58,9 +58,9 @@ public class Bibliotecario extends Persona {
     
     @Override
     public void consultarInfo() {
-        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + "\nCorreo:" + getCorreo()
-                + "\nTelefono: " + getTelefono() + "\nCodigo empleado: "+ codigoEmpleado + "\nEstado: " + estado + "\nCargo:" +
-                cargo);
+        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
+                "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nCodigo empleado: "+ codigoEmpleado + "\nEstado: " + 
+                estado + "\nCargo:" + cargo);
     }
     
 }
