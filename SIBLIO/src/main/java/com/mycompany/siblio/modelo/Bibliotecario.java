@@ -17,7 +17,7 @@ public class Bibliotecario extends Persona {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.codigoEmpleado = codigoEmpleado;
         this.cargo = cargo;
-        this.estado = estado;
+        this.estado = "activo";
     }
 
     public String getCodigoEmpleado() {
@@ -45,15 +45,28 @@ public class Bibliotecario extends Persona {
     }
     
     public Prestamo registrarPrestamo(Prestamo solicitud){
+        if(!"activo".equals(estado)){
+            throw new IllegalStateException("El bibliotecario debe estar activo para registrar prestamos.");
+        }
         return null;
     }
     
     public void registrarDevolucion(Prestamo prestamo){
-        
+        if(!"activo".equals(estado)){
+            throw new IllegalStateException("El bibliotecario debe estar activo para registrar devoluciones.");
+        }
+        if(prestamo == null){
+            throw new IllegalArgumentException("Debe de indicar el prestamo a devolver.");
+        }
     }
     
     public void gestionarInventario(Libro libro, String codigoInventario, String ubicacion){
-        
+        if(!"activo".equals(estado)){
+            throw new IllegalStateException("El bibliotecario debe estar activo para gestionar inventario.");
+        }
+        if(libro==null){
+            throw new IllegalArgumentException("Debe de indicar el libro a gestionar.");
+        }
     }
     
     @Override
