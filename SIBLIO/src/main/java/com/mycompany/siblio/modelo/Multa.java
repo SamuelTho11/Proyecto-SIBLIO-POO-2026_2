@@ -27,6 +27,7 @@ public class Multa {
     public void generarMulta() {
         if (monto <= 0) {
             System.out.println("El monto de la multa debe ser mayor a cero.");
+            return;
         }
         
         this.estado = "pendiente";
@@ -36,6 +37,7 @@ public class Multa {
     public void registrarPago() {
         if (!"pendiente".equals(estado)) {
             System.out.println("Solo se puede pagar una multa pendiente.");
+            return;
         } 
         this.estado = "pagada";
         

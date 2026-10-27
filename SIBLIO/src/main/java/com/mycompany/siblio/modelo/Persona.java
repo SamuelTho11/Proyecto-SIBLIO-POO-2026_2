@@ -75,5 +75,5 @@ public abstract class Persona {
         this.telefono = telefono;
     }
     
-    public abstract void consultarInfo();
+    public abstract String consultarInfo();
 }

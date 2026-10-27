@@ -17,11 +17,11 @@ public class Usuario extends Persona {
     private int limitePrestamos;
     private final List<Prestamo> prestamos = new ArrayList<>();
 
-    public Usuario(String tipoUsuario, String estado, int limitePrestamos, int id, String nombre, String documentoIdentidad, String correo, String telefono) {
+    public Usuario(int id, String nombre, String documentoIdentidad, String correo, String telefono, String tipoUsuario, int limitePrestamos) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.tipoUsuario = tipoUsuario;
         this.estado = "activo";
-        this.limitePrestamos = limitePrestamos;
+        setLimitePrestamos(limitePrestamos);
     }
 
     public String getTipoUsuario() {
@@ -64,11 +64,27 @@ public class Usuario extends Persona {
         if(multasPendientes()){
             throw new IllegalStateException("El usuario cuenta con multas pendientes");
         }
-        return null;
+        if(!ejemplar.consultarDisponibilidad()){
+            throw new IllegalStateException("El ejemplar "+ ejemplar.getCodigoInventario() + " no se encuentra disponible.");
+        }
+        return new Prestamo(this, ejemplar);
     }
     
     public void pagarMulta(Multa m){
-        
+        if(m==null){
+            throw new IllegalArgumentException("Debe de indicar la multa a pagar.");
+        }
+        boolean esMia=false;
+        for(Prestamo p: prestamos){
+            if(p.getMulta() == m){
+                esMia=true;
+                break;
+            }
+        }
+        if(!esMia){
+            throw new IllegalArgumentException("Esta multa no es de este usuario.");
+        }
+        m.registrarPago();
     }
 
     public List<Prestamo> consultarHistorial(){
@@ -80,21 +96,33 @@ public class Usuario extends Persona {
     }
     
     private int prestamosActivos(){
-        return 0;
+        int total = 0;
+        for(Prestamo p : prestamos){
+            if("activo".equals(p.getEstado())){
+                total++;
+            }
+        }
+        return total;
     }
     
     private boolean multasPendientes(){
+        for(Prestamo p: prestamos){
+            Multa m = p.getMulta();
+            if(m!=null && "pendiente".equals(m.getEstado())){
+                return true;
+            }
+        }
         return false;
     }
     
-    public void agregarPrestamo(Prestamo prestamo){
+    void agregarPrestamo(Prestamo prestamo){
         prestamos.add(prestamo);
     }
 
     @Override
-    public void consultarInfo() {
-        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
-                "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
-                "\nLimite de Prestamos:" + limitePrestamos);
+    public String consultarInfo() {
+        return "ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
+                "\nCorreo: " + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
+                "\nLimite de Prestamos: " + limitePrestamos;
     }
 }
