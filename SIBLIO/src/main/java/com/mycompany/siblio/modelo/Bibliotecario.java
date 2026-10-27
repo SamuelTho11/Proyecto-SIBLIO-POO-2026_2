@@ -13,7 +13,7 @@ public class Bibliotecario extends Persona {
     private String cargo;
     private String estado;
 
-    public Bibliotecario(String codigoEmpleado, String cargo, String estado, int id, String nombre, String documentoIdentidad, String correo, String telefono) {
+    public Bibliotecario(int id, String nombre, String documentoIdentidad, String correo, String telefono, String codigoEmpleado, String cargo) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.codigoEmpleado = codigoEmpleado;
         this.cargo = cargo;
@@ -77,10 +77,9 @@ public class Bibliotecario extends Persona {
     }
     
     @Override
-    public void consultarInfo() {
-        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
+    public String consultarInfo() {
+        return "ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
                 "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nCodigo empleado: "+ codigoEmpleado + "\nEstado: " + 
-                estado + "\nCargo:" + cargo);
+                estado + "\nCargo:" + cargo;
     }
-    
 }

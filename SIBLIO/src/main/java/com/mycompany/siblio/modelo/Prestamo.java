@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit;
  * @author Samuel
  */
 public class Prestamo {
-    public static final int DIAS_PRESTAMO =0;
+    public static final int DIAS_PRESTAMO =7;
     public static final double MULTA_POR_DIA = 1000;
     
     private static int contadorId = 1;

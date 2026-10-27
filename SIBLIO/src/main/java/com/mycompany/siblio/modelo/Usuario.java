@@ -17,11 +17,11 @@ public class Usuario extends Persona {
     private int limitePrestamos;
     private final List<Prestamo> prestamos = new ArrayList<>();
 
-    public Usuario(String tipoUsuario, String estado, int limitePrestamos, int id, String nombre, String documentoIdentidad, String correo, String telefono) {
+    public Usuario(int id, String nombre, String documentoIdentidad, String correo, String telefono, String tipoUsuario, int limitePrestamos) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.tipoUsuario = tipoUsuario;
         this.estado = "activo";
-        this.limitePrestamos = limitePrestamos;
+        setLimitePrestamos(limitePrestamos);
     }
 
     public String getTipoUsuario() {
@@ -115,14 +115,14 @@ public class Usuario extends Persona {
         return false;
     }
     
-    public void agregarPrestamo(Prestamo prestamo){
+    void agregarPrestamo(Prestamo prestamo){
         prestamos.add(prestamo);
     }
 
     @Override
-    public void consultarInfo() {
-        System.out.println("ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
-                "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
-                "\nLimite de Prestamos:" + limitePrestamos);
+    public String consultarInfo() {
+        return "ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
+                "\nCorreo: " + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
+                "\nLimite de Prestamos: " + limitePrestamos;
     }
 }
