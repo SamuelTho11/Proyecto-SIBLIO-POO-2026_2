@@ -11,13 +11,15 @@ package com.mycompany.siblio.modelo;
 public class Bibliotecario extends Persona {
     private String codigoEmpleado;
     private String cargo;
-    private String estado;
 
+    public Bibliotecario() {
+        super();
+    }
+    
     public Bibliotecario(int id, String nombre, String documentoIdentidad, String correo, String telefono, String codigoEmpleado, String cargo) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.codigoEmpleado = codigoEmpleado;
         this.cargo = cargo;
-        this.estado = "activo";
     }
 
     public String getCodigoEmpleado() {
@@ -35,20 +37,12 @@ public class Bibliotecario extends Persona {
     public void setCargo(String cargo) {
         this.cargo = cargo;
     }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
     
     public Prestamo registrarPrestamo(Prestamo solicitud){
-        if(!"activo".equals(estado)){
+        if(getEstado() != EstadoPersona.ACTIVO){
             throw new IllegalStateException("El bibliotecario debe estar activo para registrar prestamos.");
         }
-        if(solicitud == null || !"solicitado".equals(solicitud.getEstado())){
+        if(solicitud == null || solicitud.getEstado() != EstadoPrestamo.SOLICITADO){
             throw new IllegalArgumentException("Debe indicar un prestamo en estado 'solicitado'.");
         }
         solicitud.setBibliotecario(this);
@@ -57,7 +51,7 @@ public class Bibliotecario extends Persona {
     }
     
     public void registrarDevolucion(Prestamo prestamo){
-        if(!"activo".equals(estado)){
+        if(getEstado() != EstadoPersona.ACTIVO){
             throw new IllegalStateException("El bibliotecario debe estar activo para registrar devoluciones.");
         }
         if(prestamo == null){
@@ -66,20 +60,20 @@ public class Bibliotecario extends Persona {
         prestamo.registrarDevolucion();
     }
     
-    public void gestionarInventario(Libro libro, String codigoInventario, String ubicacion){
-        if(!"activo".equals(estado)){
+    public void gestionarInventario(Material material, String codigoInventario, String ubicacion){
+        if(getEstado() != EstadoPersona.ACTIVO){
             throw new IllegalStateException("El bibliotecario debe estar activo para gestionar inventario.");
         }
-        if(libro==null){
+        if(material==null){
             throw new IllegalArgumentException("Debe de indicar el libro a gestionar.");
         }
-        libro.agregarEjemplar(codigoInventario, ubicacion);
+        material.agregarEjemplar(codigoInventario, ubicacion);
     }
     
     @Override
     public String consultarInfo() {
         return "ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
                 "\nCorreo:" + getCorreo() + "\nTelefono: " + getTelefono() + "\nCodigo empleado: "+ codigoEmpleado + "\nEstado: " + 
-                estado + "\nCargo:" + cargo;
+                getEstado() + "\nCargo:" + cargo;
     }
 }

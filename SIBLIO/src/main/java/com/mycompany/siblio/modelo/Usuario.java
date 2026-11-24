@@ -13,14 +13,18 @@ import java.util.List;
  */
 public class Usuario extends Persona {
     private String tipoUsuario;
-    private String estado;
     private int limitePrestamos;
     private final List<Prestamo> prestamos = new ArrayList<>();
+    private final List<Reserva> reservas = new ArrayList<>();
+
+    public Usuario() {
+        super();
+        this.limitePrestamos = 1;
+    }
 
     public Usuario(int id, String nombre, String documentoIdentidad, String correo, String telefono, String tipoUsuario, int limitePrestamos) {
         super(id, nombre, documentoIdentidad, correo, telefono);
         this.tipoUsuario = tipoUsuario;
-        this.estado = "activo";
         setLimitePrestamos(limitePrestamos);
     }
 
@@ -30,14 +34,6 @@ public class Usuario extends Persona {
 
     public void setTipoUsuario(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     public int getLimitePrestamos() {
@@ -50,12 +46,18 @@ public class Usuario extends Persona {
         }
         this.limitePrestamos = limitePrestamos;
     }
+    public Prestamo solicitarPrestamo(Ejemplar ejemplar) { 
+        return solicitarPrestamo(ejemplar, Prestamo.DIAS_PRESTAMO); 
+    }
     
-    public Prestamo solicitarPrestamo(Ejemplar ejemplar){
+    public Prestamo solicitarPrestamo(Ejemplar ejemplar, int dias){
         if(ejemplar==null){
             throw new IllegalArgumentException("Debe seleccionar un ejemplar.");
         }
-        if(!"activo".equals(estado)){
+        if(dias<1){
+            throw new IllegalArgumentException("Los días de préstamo deben ser al menos 1.");
+        }
+        if(getEstado() != EstadoPersona.ACTIVO){
             throw new IllegalStateException("El usuario debe estar activo para solicitar prestamos.");
         }
         if(prestamosActivos()>= limitePrestamos){
@@ -67,7 +69,20 @@ public class Usuario extends Persona {
         if(!ejemplar.consultarDisponibilidad()){
             throw new IllegalStateException("El ejemplar "+ ejemplar.getCodigoInventario() + " no se encuentra disponible.");
         }
-        return new Prestamo(this, ejemplar);
+        return new Prestamo(this, ejemplar, dias);
+    }
+    
+    public Reserva reservarMaterial(Material material){
+        return reservarMaterial(material, 3);
+    }
+    
+    public Reserva reservarMaterial(Material material, int diasVigencia){
+        if (!puedeSolicitarPrestamo()) {
+            throw new IllegalStateException("El usuario no está habilitado para realizar reservar");
+        }
+        Reserva reserva = new Reserva(this, material, diasVigencia);
+        reservas.add(reserva);
+        return reserva;
     }
     
     public void pagarMulta(Multa m){
@@ -91,14 +106,18 @@ public class Usuario extends Persona {
         return new ArrayList<>(prestamos);
     }
     
+    public List<Reserva> consultarReservas(){
+        return new ArrayList<>(reservas);
+    }
+    
     public boolean puedeSolicitarPrestamo(){
-        return "activo".equals(estado) && prestamosActivos() < limitePrestamos && !multasPendientes();
+        return getEstado() == EstadoPersona.ACTIVO && prestamosActivos() < limitePrestamos && !multasPendientes();
     }
     
     private int prestamosActivos(){
         int total = 0;
         for(Prestamo p : prestamos){
-            if("activo".equals(p.getEstado())){
+            if(p.getEstado() == EstadoPrestamo.ACTIVO){
                 total++;
             }
         }
@@ -108,7 +127,7 @@ public class Usuario extends Persona {
     private boolean multasPendientes(){
         for(Prestamo p: prestamos){
             Multa m = p.getMulta();
-            if(m!=null && "pendiente".equals(m.getEstado())){
+            if(m != null && m.getEstado() == EstadoMulta.PENDIENTE){
                 return true;
             }
         }
@@ -122,7 +141,7 @@ public class Usuario extends Persona {
     @Override
     public String consultarInfo() {
         return "ID: "+ getId() + "\nNombre: " + getNombre() + "\nDocumento Identidad: " + getDocumentoIdentidad() + 
-                "\nCorreo: " + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + estado + 
-                "\nLimite de Prestamos: " + limitePrestamos;
+                "\nCorreo: " + getCorreo() + "\nTelefono: " + getTelefono() + "\nTipo de usuario: "+tipoUsuario + "\nEstado: " + 
+                getEstado()+"\nLimite de Prestamos: " + limitePrestamos;
     }
 }

@@ -14,14 +14,14 @@ public class Multa {
     private int idMulta;
     private double monto;
     private String motivo;
-    private String estado;
+    private EstadoMulta estado;
     private LocalDate fechaGeneracion;
 
     public Multa(int idMulta, double monto, String motivo) {
         this.idMulta = idMulta;
         setMonto(monto);
         this.motivo = motivo;
-        this.estado = "creada";
+        this.estado = EstadoMulta.CREADA;
     }
     
     public void generarMulta() {
@@ -70,11 +70,11 @@ public class Multa {
         this.motivo = motivo;
     }
 
-    public String getEstado() {
+    public EstadoMulta getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoMulta estado) {
         this.estado = estado;
     }
 

@@ -14,6 +14,12 @@ public abstract class Persona {
     private String documentoIdentidad;
     private String correo;
     private String telefono;
+    private EstadoPersona estado;
+
+    public Persona() {
+        this.estado = EstadoPersona.ACTIVO;
+    }
+    
 
     public Persona(int id, String nombre, String documentoIdentidad, String correo, String telefono) {
         this.id = id;
@@ -21,6 +27,7 @@ public abstract class Persona {
         this.documentoIdentidad = documentoIdentidad;
         this.correo = correo;
         this.telefono = telefono;
+        this.estado = EstadoPersona.ACTIVO;
     }
 
     public int getId() {
@@ -68,10 +75,18 @@ public abstract class Persona {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    public EstadoPersona getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPersona estado) {
+        this.estado = estado;
+    }
     
     public void actualizarDatos(String nombre, String correo, String telefono){
         this.nombre = nombre;
-        this.correo = correo;
+        setCorreo(correo);
         this.telefono = telefono;
     }
     

@@ -13,14 +13,14 @@ import java.time.temporal.ChronoUnit;
 public class Prestamo {
     public static final int DIAS_PRESTAMO =7;
     public static final double MULTA_POR_DIA = 1000;
-    
     private static int contadorId = 1;
     
     private int idPrestamo;
+    private int diasPrestamo;
     private LocalDate fechaPrestamo;
     private LocalDate fechaDevolucionEsperada;
     private LocalDate fechaDevolucionReal;
-    private String estado;
+    private EstadoPrestamo estado;
     
     
     private final Usuario usuario;
@@ -28,11 +28,11 @@ public class Prestamo {
     private Bibliotecario bibliotecario;
     private Multa multa;
     
-    Prestamo(Usuario usuario, Ejemplar ejemplar) {
+    Prestamo(Usuario usuario, Ejemplar ejemplar, int diasPrestamos) {
         this.idPrestamo = contadorId++;
         this.usuario = usuario;
         this.ejemplar = ejemplar;
-        this.estado = "solicitado";
+        this.estado = EstadoPrestamo.SOLICITADO;
     }
     
     public void crearPrestamo(){
@@ -136,11 +136,11 @@ public class Prestamo {
         this.fechaDevolucionReal = fechaDevolucionReal;
     }
 
-    public String getEstado() {
+    public EstadoPrestamo getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoPrestamo estado) {
         this.estado = estado;
     }
 
