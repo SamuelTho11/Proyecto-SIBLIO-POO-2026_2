@@ -78,7 +78,7 @@ public class Usuario extends Persona {
     
     public Reserva reservarMaterial(Material material, int diasVigencia){
         if (!puedeSolicitarPrestamo()) {
-            throw new IllegalStateException("El usuario no está habilitado para realizar reservar");
+            throw new IllegalStateException("El usuario no está habilitado para realizar reservas");
         }
         Reserva reserva = new Reserva(this, material, diasVigencia);
         reservas.add(reserva);
