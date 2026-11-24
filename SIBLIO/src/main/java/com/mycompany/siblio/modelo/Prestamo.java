@@ -5,7 +5,7 @@
 package com.mycompany.siblio.modelo;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-//santi6767
+//santi67676767
 /**
  *
  * @author Samuel
@@ -23,36 +23,50 @@ public class Prestamo {
     private EstadoPrestamo estado;
     
     
-    private final Usuario usuario;
-    private final Ejemplar ejemplar;
+    private  Usuario usuario;
+    private  Ejemplar ejemplar;
     private Bibliotecario bibliotecario;
     private Multa multa;
     
-    Prestamo(Usuario usuario, Ejemplar ejemplar, int diasPrestamos) {
+    public Prestamo() {
+        this.idPrestamo = contadorId++;
+        this.diasPrestamo = DIAS_PRESTAMO;
+        this.estado = EstadoPrestamo.SOLICITADO;
+    }
+    
+    Prestamo(Usuario usuario, Ejemplar ejemplar, int diasPrestamo) {
         this.idPrestamo = contadorId++;
         this.usuario = usuario;
         this.ejemplar = ejemplar;
+        this.diasPrestamo = diasPrestamo;
         this.estado = EstadoPrestamo.SOLICITADO;
     }
     
     public void crearPrestamo(){
         
-        if(!"solicitado".equals(estado)){
-            System.out.println("Solo se puede crear un préstamo solicitado.");
-            return;
+        if (estado != EstadoPrestamo.SOLICITADO) {
+            throw new IllegalStateException(
+                "Solo se puede crear un préstamo en estado SOLICITADO."
+            );
         }
+
         if (bibliotecario == null) {
-            System.out.println("El préstamo debe estar asignado a un bibliotecario.");
-            return;
+            throw new IllegalStateException(
+                "El préstamo debe estar asignado a un bibliotecario."
+            );
         }
+
         if (!usuario.puedeSolicitarPrestamo()) {
-            System.out.println("El usuario ya no cumple las condiciones para el préstamo.");
-            return;
+            throw new IllegalStateException(
+                "El usuario ya no cumple las condiciones para el préstamo."
+            );
         }
+
         if (!ejemplar.consultarDisponibilidad()) {
-            System.out.println("El ejemplar " + ejemplar.getCodigoInventario()
-                    + " no está disponible.");
-            return;
+            throw new IllegalStateException(
+                "El ejemplar " + ejemplar.getCodigoInventario() +
+                " no está disponible."
+            );
         }
         
         this.fechaPrestamo = LocalDate.now();
@@ -63,22 +77,29 @@ public class Prestamo {
          
     }
     
-    public void registrarDevolucion(){
-        
-        if (!"activo".equals(estado)) {
-            throw new IllegalStateException("Solo se puede devolver un préstamo activo.");
+    public void registrarDevolucion() {
+        if (estado != EstadoPrestamo.ACTIVO) {
+            throw new IllegalStateException(
+                "Solo se puede devolver un préstamo activo."
+            );
         }
+
         this.fechaDevolucionReal = LocalDate.now();
-        this.estado = "devuelto";
-        ejemplar.cambiarEstado("disponible");
-        
+        this.estado = EstadoPrestamo.DEVUELTO;
+
+        ejemplar.cambiarEstado(EstadoEjemplar.DISPONIBLE);
+
         double monto = calcularMulta();
-        
+
         if (monto > 0) {
-            this.multa = new Multa(idPrestamo, monto, "Retraso en la devolución");
+            this.multa = new Multa(
+                idPrestamo,
+                monto,
+                "Retraso en la devolución"
+            );
+
             this.multa.generarMulta();
         }
-        
     }
     
     public double calcularMulta(){
