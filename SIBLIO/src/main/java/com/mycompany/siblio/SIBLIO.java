@@ -10,8 +10,10 @@ import com.mycompany.siblio.modelo.Libro;
 import com.mycompany.siblio.modelo.Multa;
 import com.mycompany.siblio.modelo.Prestamo;
 import com.mycompany.siblio.modelo.Usuario;
+import com.mycompany.siblio.modelo.*;
 import java.time.LocalDate;
-
+import java.util.Arrays;
+import java.util.List;
 /**
  *
  * @author Samuel
