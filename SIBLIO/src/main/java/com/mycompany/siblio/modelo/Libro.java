@@ -1,104 +1,71 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.siblio.modelo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
+ * Representa un libro dentro del catálogo de publicaciones de SIBLIO.
  *
  * @author Samuel
  */
-public class Libro {
-    
-    private int idLibro;
-    private String titulo;
-    private String autor;
-    private String editorial;
-    private int anioPublicacion;
+public class Libro extends Publicacion {
     private String categoria;
-    
-    private final List<Ejemplar> ejemplares = new ArrayList<>();
-    
+
+    public Libro() {
+        super();
+    }
+
     public Libro(int idLibro, String titulo, String autor, String editorial,
                  int anioPublicacion, String categoria) {
-        this.idLibro = idLibro;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.editorial = editorial;
-        this.anioPublicacion = anioPublicacion;
-        this.categoria = categoria;
+        super(idLibro, titulo, "LIB-" + idLibro, autor, editorial, anioPublicacion);
+        setCategoria(categoria);
     }
 
     public void registrarLibro() {
-        if (titulo == null || titulo.trim().isEmpty()
-                || autor == null || autor.trim().isEmpty()) {
+        if (getTitulo() == null || getTitulo().trim().isEmpty()
+                || getAutor() == null || getAutor().trim().isEmpty()) {
             throw new IllegalStateException("El libro debe tener título y autor.");
         }
     }
-    
+
     public void actualizarInformacion(String titulo, String autor, String editorial,
                                       int anioPublicacion, String categoria) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.editorial = editorial;
-        this.anioPublicacion = anioPublicacion;
-        this.categoria = categoria;
+        setTitulo(titulo);
+        setAutor(autor);
+        setEditorial(editorial);
+        setAnioPublicacion(anioPublicacion);
+        setCategoria(categoria);
     }
-    
+
+    @Override
+    public String getTipoMaterial() {
+        return "Libro";
+    }
+
+    @Override
     public String mostrarFicha() {
-        return "Libro #" + idLibro + "\n"
-                + "  Título:     " + titulo + "\n"
-                + "  Autor:      " + autor + "\n"
-                + "  Editorial:  " + editorial + " (" + anioPublicacion + ")\n"
+        return "Libro #" + getIdMaterial() + "\n"
+                + "  Título:     " + getTitulo() + "\n"
+                + "  Autor:      " + getAutor() + "\n"
+                + "  Editorial:  " + getEditorial() + " (" + getAnioPublicacion() + ")\n"
                 + "  Categoría:  " + categoria + "\n"
-                + "  Ejemplares: " + ejemplares.size()
+                + "  Ejemplares: " + getEjemplares().size()
                 + " (disponibles: " + contarEjemplaresDisponibles() + ")";
     }
-    
-     public Ejemplar agregarEjemplar(String codigoInventario, String ubicacion) {
-        Ejemplar e = new Ejemplar(codigoInventario, ubicacion, this);
-        ejemplares.add(e);
-        return e;
+
+    public int getIdLibro() {
+        return getIdMaterial();
     }
-     
-      public boolean puedePrestarse() {
-        return !ejemplares.isEmpty();
+
+    public void setIdLibro(int idLibro) {
+        setIdMaterial(idLibro);
     }
-    
-      public int contarEjemplaresDisponibles() {
-        int total = 0;
-        for (Ejemplar e : ejemplares) {
-            if (e.consultarDisponibilidad()) {
-                total++;
-            }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        if (categoria == null || categoria.isBlank()) {
+            throw new IllegalArgumentException("La categoría del libro no puede ser nula ni estar vacía.");
         }
-        return total;
+        this.categoria = categoria;
     }
-      
-      public List<Ejemplar> getEjemplares() {
-        return Collections.unmodifiableList(ejemplares);
-    }
-      
-      
-      public int getIdLibro() { return idLibro; }
-    public void setIdLibro(int idLibro) { this.idLibro = idLibro; }
-
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-
-    public String getAutor() { return autor; }
-    public void setAutor(String autor) { this.autor = autor; }
-
-    public String getEditorial() { return editorial; }
-    public void setEditorial(String editorial) { this.editorial = editorial; }
-
-    public int getAnioPublicacion() { return anioPublicacion; }
-    public void setAnioPublicacion(int anioPublicacion) { this.anioPublicacion = anioPublicacion; }
-
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
 }
