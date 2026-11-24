@@ -16,6 +16,10 @@ public class Multa {
     private String motivo;
     private EstadoMulta estado;
     private LocalDate fechaGeneracion;
+    
+    public Multa() {
+        this.estado = EstadoMulta.CREADA;
+    }
 
     public Multa(int idMulta, double monto, String motivo) {
         this.idMulta = idMulta;
@@ -26,21 +30,23 @@ public class Multa {
     
     public void generarMulta() {
         if (monto <= 0) {
-            System.out.println("El monto de la multa debe ser mayor a cero.");
-            return;
+            throw new IllegalStateException(
+                "El monto de la multa debe ser mayor a cero."
+            );
         }
-        
-        this.estado = "pendiente";
+
+        this.estado = EstadoMulta.PENDIENTE;
         this.fechaGeneracion = LocalDate.now();
     }
     
     public void registrarPago() {
-        if (!"pendiente".equals(estado)) {
-            System.out.println("Solo se puede pagar una multa pendiente.");
-            return;
-        } 
-        this.estado = "pagada";
-        
+        if (estado != EstadoMulta.PENDIENTE) {
+            throw new IllegalStateException(
+                "Solo se puede pagar una multa en estado PENDIENTE."
+            );
+        }
+
+        this.estado = EstadoMulta.PAGADA;
     }
 
     public int getIdMulta() {

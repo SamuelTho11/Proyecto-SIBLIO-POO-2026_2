@@ -102,26 +102,41 @@ public class Prestamo {
         }
     }
     
-    public double calcularMulta(){
+    public double calcularMulta() {
         if (fechaDevolucionEsperada == null) {
             return 0;
         }
-        
-        LocalDate referencia = (fechaDevolucionReal != null) ? fechaDevolucionReal : LocalDate.now();
-        long diasRetraso = ChronoUnit.DAYS.between(fechaDevolucionEsperada, referencia);
-        return diasRetraso > 0 ? diasRetraso * MULTA_POR_DIA : 0;
+
+        LocalDate referencia = (fechaDevolucionReal != null)
+                ? fechaDevolucionReal
+                : LocalDate.now();
+
+        long diasRetraso = ChronoUnit.DAYS.between(
+                fechaDevolucionEsperada,
+                referencia
+        );
+
+        return diasRetraso > 0
+                ? diasRetraso * MULTA_POR_DIA
+                : 0;
     }
     
-     public boolean renovarPrestamo(){
-         if (!"activo".equals(estado)) {
+     public boolean renovarPrestamo() {
+        if (estado != EstadoPrestamo.ACTIVO
+                || LocalDate.now().isAfter(fechaDevolucionEsperada)) {
             return false;
         }
-         if (LocalDate.now().isAfter(fechaDevolucionEsperada)) {
-            return false;
-        }
-         fechaDevolucionEsperada = fechaDevolucionEsperada.plusDays(DIAS_PRESTAMO);
+
+        fechaDevolucionEsperada =
+                fechaDevolucionEsperada.plusDays(diasPrestamo);
+
         return true;
-     }
+    }
+
+
+    public int getDiasPrestamo() {
+        return diasPrestamo;
+    }
 
     public int getIdPrestamo() {
         return idPrestamo;
