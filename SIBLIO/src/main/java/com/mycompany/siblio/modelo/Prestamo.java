@@ -68,13 +68,13 @@ public class Prestamo {
                 " no está disponible."
             );
         }
-        
+
         this.fechaPrestamo = LocalDate.now();
-        this.fechaDevolucionEsperada = fechaPrestamo.plusDays(DIAS_PRESTAMO);
-        this.estado = "activo";
-        ejemplar.cambiarEstado("prestado");
+        this.fechaDevolucionEsperada = fechaPrestamo.plusDays(diasPrestamo);
+        this.estado = EstadoPrestamo.ACTIVO;
+
+        ejemplar.cambiarEstado(EstadoEjemplar.PRESTADO);
         usuario.agregarPrestamo(this);
-         
     }
     
     public void registrarDevolucion() {
