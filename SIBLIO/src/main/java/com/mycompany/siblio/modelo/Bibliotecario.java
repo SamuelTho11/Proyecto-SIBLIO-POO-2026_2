@@ -45,8 +45,10 @@ public class Bibliotecario extends Persona {
         if(solicitud == null || solicitud.getEstado() != EstadoPrestamo.SOLICITADO){
             throw new IllegalArgumentException("Debe indicar un prestamo en estado 'solicitado'.");
         }
-        solicitud.setBibliotecario(this);
-        solicitud.crearPrestamo();
+        synchronized (solicitud.getEjemplar()) {
+            solicitud.setBibliotecario(this);
+            solicitud.crearPrestamo();
+        }
         return solicitud;
     }
     

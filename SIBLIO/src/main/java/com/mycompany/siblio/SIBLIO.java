@@ -14,6 +14,9 @@ import com.mycompany.siblio.modelo.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 /**
  *
  * @author Samuel
@@ -53,7 +56,7 @@ public class SIBLIO {
                 "Mensual"
         );
 
-        revista.agregarEjemplar(
+        Ejemplar rev1 = revista.agregarEjemplar(
                 "REV-101-A",
                 "Hemeroteca 1"
         );
@@ -166,5 +169,42 @@ public class SIBLIO {
                 + " estado: "
                 + segundo.getEstado()
         );
+
+        probarConcurrenciaPrestamos(jose, rev1);
+    }
+
+    private static void probarConcurrenciaPrestamos(Bibliotecario bibliotecario, Ejemplar ejemplarCompartido) {
+        System.out.println("\n=== PRUEBA DE CONCURRENCIA (ExecutorService) ===");
+        Usuario u1 = new Usuario(3, "Ana Perez", "1003", "ana@gmail.com", "3001112233", "estudiante", 2);
+        Usuario u2 = new Usuario(4, "Luis Gomez", "1004", "luisg@gmail.com", "3004445566", "docente", 2);
+        Usuario u3 = new Usuario(5, "Maria Diaz", "1005", "maria@gmail.com", "3007778899", "estudiante", 2);
+
+        List<Usuario> solicitantes = Arrays.asList(u1, u2, u3);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        for (Usuario u : solicitantes) {
+            executor.execute(() -> {
+                String hilo = Thread.currentThread().getName();
+                try {
+                    Prestamo p = bibliotecario.registrarPrestamo(u.solicitarPrestamo(ejemplarCompartido));
+                    System.out.println("[" + hilo + "] Préstamo #" + p.getIdPrestamo()
+                            + " aprobado para " + u.getNombre()
+                            + " sobre " + ejemplarCompartido.getCodigoInventario());
+                } catch (IllegalStateException | IllegalArgumentException ex) {
+                    System.out.println("[" + hilo + "] Solicitud rechazada para "
+                            + u.getNombre() + ": " + ex.getMessage());
+                }
+            });
+        }
+
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }
