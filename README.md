@@ -11,4 +11,4 @@ Para simular varias solicitudes al mismo tiempo usamos ExecutorService con 3 hil
 Para evitar que dos hilos presten el mismo ejemplar al tiempo, usamos synchronized sobre el ejemplar que se está prestando (synchronized (solicitud.getEjemplar())). Así, cuando llegan varios hilos por el mismo ejemplar, solo pasa uno a la vez: el primero lo presta y lo marca como PRESTADO, y a los demás les sale el aviso de que ya no está disponible.
 
 Cómo probarlo
-Al final de SIBLIO.java pusimos una prueba donde 3 hilos intentan prestar el mismo ejemplar (REV-101-A) al tiempo. En la consola se muestra el nombre de cada hilo, y se ve que uno solo logra el préstamo y los otros dos son rechazados.
+Al final de SIBLIO.java pusimos tres pruebas con ExecutorService:3 hilos intentando prestar el mismo ejemplar (REV-101-A) al tiempo, 3 hilos intentando devolver el mismo préstamo al tiempo, en donde solo uno logra devolverlo y los demás son rechazados y 3 usuarios reservando un libro en paralelo.
