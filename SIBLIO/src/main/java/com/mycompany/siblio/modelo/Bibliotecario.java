@@ -59,7 +59,9 @@ public class Bibliotecario extends Persona {
         if(prestamo == null){
             throw new IllegalArgumentException("Debe de indicar el prestamo a devolver.");
         }
-        prestamo.registrarDevolucion();
+        synchronized(prestamo){
+            prestamo.registrarDevolucion();
+        }
     }
     
     public void gestionarInventario(Material material, String codigoInventario, String ubicacion){

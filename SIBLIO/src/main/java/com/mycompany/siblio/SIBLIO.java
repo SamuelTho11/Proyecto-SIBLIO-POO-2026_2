@@ -25,14 +25,7 @@ public class SIBLIO {
 
     public static void main(String[] args) {
 
-        Libro libro = new Libro(
-                1,
-                "Cien años de Soledad",
-                "Gabriel Garcia Marquez",
-                "Sudamericana",
-                1967,
-                "Novela"
-        );
+        Libro libro = new Libro(1,"Cien años de Soledad","Gabriel Garcia Marquez","Sudamericana",1967, "Novela" );
 
         libro.registrarLibro();
 
@@ -46,15 +39,7 @@ public class SIBLIO {
                 "Estante 3"
         );
 
-        Revista revista = new Revista(
-                2,
-                "Investigación y Ciencia",
-                "Varios",
-                "Prensa Científica",
-                2025,
-                512,
-                "Mensual"
-        );
+        Revista revista = new Revista(2,"Investigación y Ciencia","Varios","Prensa Científica",2025,512,"Mensual");
 
         Ejemplar rev1 = revista.agregarEjemplar(
                 "REV-101-A",
@@ -71,25 +56,9 @@ public class SIBLIO {
             System.out.println(m.mostrarFicha() + "\n");
         }
 
-        Usuario carlos = new Usuario(
-                1,
-                "Carlos Mele",
-                "1001",
-                "carlos@gmail.com",
-                "3256704552",
-                "estudiante",
-                2
-        );
+        Usuario carlos = new Usuario(1,"Carlos Mele","1001","carlos@gmail.com","3256704552","estudiante",2);
 
-        Bibliotecario jose = new Bibliotecario(
-                2,
-                "Jose Caicedo",
-                "2002",
-                "luis@gmail.com",
-                "3159238743",
-                "EMP-01",
-                "Auxiliar"
-        );
+        Bibliotecario jose = new Bibliotecario(2,"Jose Caicedo","2002","luis@gmail.com","3159238743","EMP-01","Auxiliar");
 
         // Polimorfismo sobre Persona
         List<Persona> personas =
@@ -171,6 +140,8 @@ public class SIBLIO {
         );
 
         probarConcurrenciaPrestamos(jose, rev1);
+        probarConcurrenciaDevoluciones(jose, segundo);
+        probarConcurrenciaReservas(libro);
     }
 
     private static void probarConcurrenciaPrestamos(Bibliotecario bibliotecario, Ejemplar ejemplarCompartido) {
@@ -203,6 +174,61 @@ public class SIBLIO {
                 executor.shutdownNow();
             }
         } catch (InterruptedException ex) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+    private static void probarConcurrenciaDevoluciones(Bibliotecario bibliotecario,Prestamo prestamo){
+        System.out.println("\n=== PRUEBA DE CONCURRENCIA: DEVOLUCIONES ===");
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        for (int i = 1; i <= 3; i++){
+            final int intento = i;
+            executor.execute(()-> {
+                String hilo = Thread.currentThread().getName();
+                try{
+                    bibliotecario.registrarDevolucion(prestamo);
+                    System.out.println("[" + hilo + "] Intento #" + intento + ": Devolución registrada. Estado: " + prestamo.getEstado());
+                } catch(IllegalStateException | IllegalArgumentException ex){
+                    System.out.println("[" + hilo + "] Intento #" + intento+ " rechazado: " + ex.getMessage());
+                }
+            });
+        }
+        executor.shutdown();
+        try{
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)){
+                executor.shutdownNow();
+            }
+        }catch(InterruptedException ex){
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+    
+    private static void probarConcurrenciaReservas(Material material) {
+        System.out.println("\n=== PRUEBA DE CONCURRENCIA: RESERVAS ===");
+        Usuario u1 = new Usuario(6, "Sofia Ruiz", "1006", "sofia@gmail.com", "3011112233", "estudiante", 2);
+        Usuario u2 = new Usuario(7, "Mateo Lara", "1007", "mateo@gmail.com","3014445566", "docente", 2);
+        Usuario u3 = new Usuario(8, "Laura Vega", "1008", "laura@gmail.com", "3017778899", "estudiante", 2);
+        List<Usuario> usuarios = Arrays.asList(u1, u2, u3);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        
+        for (Usuario u : usuarios) {
+            executor.execute(()-> {
+                String hilo = Thread.currentThread().getName();
+                try {
+                    Reserva r = u.reservarMaterial(material, 4);
+                    System.out.println("[" + hilo + "] Reserva #" + r.getIdReserva() + " creada para " + u.getNombre()+ " sobre " + material.getTitulo());
+                } catch(IllegalStateException | IllegalArgumentException ex){
+                    System.out.println("[" + hilo + "] Reserva rechazada para "+ u.getNombre() + ": " + ex.getMessage());
+                }
+            });
+        }
+        executor.shutdown();
+        try{
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        }catch( InterruptedException ex){
             executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
