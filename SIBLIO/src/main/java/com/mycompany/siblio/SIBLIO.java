@@ -71,73 +71,39 @@ public class SIBLIO {
         }
 
         // Reserva
-        Reserva reserva =
-                carlos.reservarMaterial(revista, 5);
+        Reserva reserva = carlos.reservarMaterial(revista, 5);
 
-        System.out.println(
-                "\nReserva #" + reserva.getIdReserva()
-                + " vigente? "
-                + reserva.estaVigente()
-        );
+        System.out.println("\nReserva #" + reserva.getIdReserva() + " vigente? "+ reserva.estaVigente());
 
         reserva.confirmarReserva();
 
         // Préstamo con días estándar y personalizados
-        Prestamo prestamo =
-                jose.registrarPrestamo(
-                        carlos.solicitarPrestamo(e1)
-                );
+        Prestamo prestamo = jose.registrarPrestamo(carlos.solicitarPrestamo(e1));
 
-        System.out.println(
-                "Préstamo #"
-                + prestamo.getIdPrestamo()
-                + " estado: "
-                + prestamo.getEstado()
-        );
+        System.out.println("Préstamo #"+ prestamo.getIdPrestamo() + " estado: "+ prestamo.getEstado());
 
         // Simular retraso, devolución y multa
-        prestamo.setFechaPrestamo(
-                LocalDate.now().minusDays(20)
-        );
+        prestamo.setFechaPrestamo(LocalDate.now().minusDays(20));
 
-        prestamo.setFechaDevolucionEsperada(
-                LocalDate.now().minusDays(10)
-        );
+        prestamo.setFechaDevolucionEsperada(LocalDate.now().minusDays(10));
 
         jose.registrarDevolucion(prestamo);
 
         Multa multa = prestamo.getMulta();
 
-        System.out.println(
-                "Multa generada: $"
-                + multa.getMonto()
-                + " ("
-                + multa.getEstado()
-                + ")"
-        );
+        System.out.println("Multa generada: $" + multa.getMonto()+ " (" + multa.getEstado()+ ")");
 
         try {
             carlos.solicitarPrestamo(e2, 14);
         } catch (IllegalStateException ex) {
-            System.out.println(
-                    "Bloqueado por multa: "
-                    + ex.getMessage()
-            );
+            System.out.println("Bloqueado por multa: "+ ex.getMessage());
         }
 
         carlos.pagarMulta(multa);
 
-        Prestamo segundo =
-                jose.registrarPrestamo(
-                        carlos.solicitarPrestamo(e2, 14)
-                );
+        Prestamo segundo = jose.registrarPrestamo(carlos.solicitarPrestamo(e2, 14));
 
-        System.out.println(
-                "Segundo préstamo (14 días) #"
-                + segundo.getIdPrestamo()
-                + " estado: "
-                + segundo.getEstado()
-        );
+        System.out.println("Segundo préstamo (14 días) #" + segundo.getIdPrestamo()+ " estado: "+ segundo.getEstado());
 
         probarConcurrenciaPrestamos(jose, rev1);
         probarConcurrenciaDevoluciones(jose, segundo);
