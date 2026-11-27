@@ -1,4 +1,4 @@
-package com.mycompany.siblio.modelo;
+package com.mycompany.siblio.enums;
 
 /**
  * Estados posibles para un préstamo en SIBLIO.

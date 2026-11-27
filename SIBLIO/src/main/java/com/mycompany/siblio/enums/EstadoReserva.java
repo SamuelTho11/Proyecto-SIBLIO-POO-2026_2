@@ -1,4 +1,4 @@
-package com.mycompany.siblio.modelo;
+package com.mycompany.siblio.enums;
 
 /**
  * Estados posibles para una reserva de material bibliográfico.

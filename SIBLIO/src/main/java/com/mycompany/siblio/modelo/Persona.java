@@ -4,6 +4,8 @@
  */
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.enums.EstadoPersona;
+
 /**
  *
  * @author Samuel

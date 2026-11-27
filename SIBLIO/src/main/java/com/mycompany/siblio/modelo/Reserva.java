@@ -4,6 +4,8 @@
  */
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.enums.EstadoReserva;
+import com.mycompany.siblio.excepciones.EstadoOperacionException;
 import java.time.LocalDate;
 
 /**

@@ -1,4 +1,4 @@
-package com.mycompany.siblio.modelo;
+package com.mycompany.siblio.enums;
 
 /**
  * Estados posibles para una persona (usuario o bibliotecario) en SIBLIO.

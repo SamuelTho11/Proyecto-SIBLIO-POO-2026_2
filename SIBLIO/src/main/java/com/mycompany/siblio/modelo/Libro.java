@@ -1,11 +1,16 @@
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.excepciones.EstadoOperacionException;
+import com.mycompany.siblio.interfaces.Exportable;
+import com.mycompany.siblio.interfaces.Prestable;
+import com.mycompany.siblio.interfaces.Reservable;
+
 /**
  * Representa un libro dentro del catálogo de publicaciones de SIBLIO.
  *
  * @author Samuel
  */
-public class Libro extends Publicacion {
+public class Libro extends Publicacion implements Prestable, Reservable, Exportable {
     private String categoria;
 
     public Libro() {
@@ -66,5 +71,31 @@ public class Libro extends Publicacion {
             throw new IllegalArgumentException("La categoría del libro no puede ser nula ni estar vacía.");
         }
         this.categoria = categoria;
+    }
+
+    @Override
+    public boolean estaDisponible() {
+        return puedePrestarse();
+    }
+
+    @Override
+    public int getDiasMaximosPrestamo() {
+        return 14;
+    }
+
+    @Override
+    public boolean admiteReserva() {
+        return !getEjemplares().isEmpty();
+    }
+
+    @Override
+    public int getDiasVigenciaReserva() {
+        return 5;
+    }
+
+    @Override
+    public String toJson() {
+        return String.format("{\"tipo\":\"Libro\",\"id\":%d,\"titulo\":\"%s\",\"autor\":\"%s\",\"editorial\":\"%s\",\"anio\":%d,\"categoria\":\"%s\",\"disponibles\":%d}",
+            getIdMaterial(), getTitulo(), getAutor(), getEditorial(), getAnioPublicacion(), categoria, contarEjemplaresDisponibles());
     }
 }

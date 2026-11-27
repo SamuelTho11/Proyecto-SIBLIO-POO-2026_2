@@ -4,6 +4,12 @@
  */
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.excepciones.EjemplarNoDisponibleException;
+import com.mycompany.siblio.excepciones.UsuarioInhabilitadoException;
+import com.mycompany.siblio.enums.EstadoMulta;
+import com.mycompany.siblio.enums.EstadoPrestamo;
+import com.mycompany.siblio.excepciones.EstadoOperacionException;
+import com.mycompany.siblio.enums.EstadoPersona;
 import java.util.ArrayList;
 import java.util.List;
 

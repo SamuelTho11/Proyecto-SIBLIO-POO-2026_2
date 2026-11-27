@@ -1,9 +1,13 @@
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.interfaces.Exportable;
+import com.mycompany.siblio.interfaces.Prestable;
+import com.mycompany.siblio.interfaces.Reservable;
+
 /**
  * Representa una revista dentro del catálogo de publicaciones de SIBLIO.
  */
-public class Revista extends Publicacion {
+public class Revista extends Publicacion implements Exportable, Prestable, Reservable {
     private int numeroEdicion;
     private String periodicidad;
 
@@ -47,5 +51,31 @@ public class Revista extends Publicacion {
 
     public void setPeriodicidad(String periodicidad) {
         this.periodicidad = periodicidad;
+    }
+
+    @Override
+    public String toJson() {
+        return String.format("{\"tipo\":\"Revista\",\"id\":%d,\"titulo\":\"%s\",\"editor\":\"%s\",\"edicion\":%d,\"periodicidad\":\"%s\",\"anio\":%d,\"disponibles\":%d}",
+            getIdMaterial(), getTitulo(), getAutor(), numeroEdicion,periodicidad, getAnioPublicacion(), contarEjemplaresDisponibles());
+    }
+
+    @Override
+    public boolean estaDisponible() {
+        return puedePrestarse();
+    }
+
+    @Override
+    public int getDiasMaximosPrestamo() {
+        return 3;
+    }
+
+    @Override
+    public boolean admiteReserva() {
+        return !getEjemplares().isEmpty();
+    }
+
+    @Override
+    public int getDiasVigenciaReserva() {
+        return 2;
     }
 }

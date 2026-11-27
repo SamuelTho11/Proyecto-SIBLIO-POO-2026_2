@@ -1,11 +1,15 @@
 package com.mycompany.siblio.modelo;
 
+import com.mycompany.siblio.enums.EstadoEjemplar;
+import com.mycompany.siblio.interfaces.Exportable;
+import com.mycompany.siblio.interfaces.Prestable;
+
 /**
  * Representa un ejemplar físico perteneciente a un Material en SIBLIO.
  *
  * @author Samuel
  */
-public class Ejemplar {
+public class Ejemplar implements Prestable, Exportable{
     private String codigoInventario;
     private EstadoEjemplar estado;
     private String ubicacion;
@@ -62,5 +66,21 @@ public class Ejemplar {
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public boolean estaDisponible() {
+        return consultarDisponibilidad();
+    }
+
+    @Override
+    public int getDiasMaximosPrestamo() {
+        return 7;
+    }
+
+    @Override
+    public String toJson() {
+        return String.format("{\"codigoInventario\":\"%s\",\"ubicacion\":\"%s\",\"estado\":\"%s\",\"material\":\"%s\"}",
+            codigoInventario, ubicacion, estado, material.getTitulo());
     }
 }

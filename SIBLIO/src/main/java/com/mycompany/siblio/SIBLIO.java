@@ -4,6 +4,9 @@
 
 package com.mycompany.siblio;
 
+import com.mycompany.siblio.excepciones.EjemplarNoDisponibleException;
+import com.mycompany.siblio.excepciones.UsuarioInhabilitadoException;
+import com.mycompany.siblio.excepciones.EstadoOperacionException;
 import com.mycompany.siblio.modelo.Bibliotecario;
 import com.mycompany.siblio.modelo.Ejemplar;
 import com.mycompany.siblio.modelo.Libro;

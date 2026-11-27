@@ -3,6 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.siblio.modelo;
+import com.mycompany.siblio.excepciones.EjemplarNoDisponibleException;
+import com.mycompany.siblio.excepciones.UsuarioInhabilitadoException;
+import com.mycompany.siblio.enums.EstadoPrestamo;
+import com.mycompany.siblio.enums.EstadoEjemplar;
+import com.mycompany.siblio.excepciones.EstadoOperacionException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 //santi67676767
