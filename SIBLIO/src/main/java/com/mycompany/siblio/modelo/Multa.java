@@ -28,22 +28,18 @@ public class Multa {
         this.estado = EstadoMulta.CREADA;
     }
     
-    public void generarMulta() {
+    public void generarMulta() throws EstadoOperacionException{
         if (monto <= 0) {
-            throw new IllegalStateException(
-                "El monto de la multa debe ser mayor a cero."
-            );
+            throw new EstadoOperacionException("El monto de la multa debe ser mayor a cero.");
         }
 
         this.estado = EstadoMulta.PENDIENTE;
         this.fechaGeneracion = LocalDate.now();
     }
     
-    public void registrarPago() {
+    public void registrarPago() throws EstadoOperacionException{
         if (estado != EstadoMulta.PENDIENTE) {
-            throw new IllegalStateException(
-                "Solo se puede pagar una multa en estado PENDIENTE."
-            );
+            throw new EstadoOperacionException("Solo se puede pagar una multa en estado PENDIENTE.");
         }
 
         this.estado = EstadoMulta.PAGADA;

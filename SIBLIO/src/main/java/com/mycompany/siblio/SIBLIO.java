@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class SIBLIO {
 
     public static void main(String[] args) {
-
+        try{
         Libro libro = new Libro(1,"Cien años de Soledad","Gabriel Garcia Marquez","Sudamericana",1967, "Novela" );
 
         libro.registrarLibro();
@@ -95,8 +95,8 @@ public class SIBLIO {
 
         try {
             carlos.solicitarPrestamo(e2, 14);
-        } catch (IllegalStateException ex) {
-            System.out.println("Bloqueado por multa: "+ ex.getMessage());
+        } catch (UsuarioInhabilitadoException ex) {
+            System.out.println("Bloqueado por multa: ("+ex.getNombreUsuario()+"): "+ ex.getMessage());
         }
 
         carlos.pagarMulta(multa);
@@ -108,8 +108,12 @@ public class SIBLIO {
         probarConcurrenciaPrestamos(jose, rev1);
         probarConcurrenciaDevoluciones(jose, segundo);
         probarConcurrenciaReservas(libro);
+    } catch(EjemplarNoDisponibleException | UsuarioInhabilitadoException | EstadoOperacionException ex){
+        System.out.println("Error de operación en SIBLIO: " + ex.getMessage());
+    } finally {
+            System.out.println("\n=== Ejecución de SIBLIO finalizada ===");
+        }
     }
-
     private static void probarConcurrenciaPrestamos(Bibliotecario bibliotecario, Ejemplar ejemplarCompartido) {
         System.out.println("\n=== PRUEBA DE CONCURRENCIA (ExecutorService) ===");
         Usuario u1 = new Usuario(3, "Ana Perez", "1003", "ana@gmail.com", "3001112233", "estudiante", 2);
@@ -124,12 +128,12 @@ public class SIBLIO {
                 String hilo = Thread.currentThread().getName();
                 try {
                     Prestamo p = bibliotecario.registrarPrestamo(u.solicitarPrestamo(ejemplarCompartido));
-                    System.out.println("[" + hilo + "] Préstamo #" + p.getIdPrestamo()
-                            + " aprobado para " + u.getNombre()
+                    System.out.println("[" + hilo + "] Préstamo #" + p.getIdPrestamo() + " aprobado para " + u.getNombre()
                             + " sobre " + ejemplarCompartido.getCodigoInventario());
-                } catch (IllegalStateException | IllegalArgumentException ex) {
-                    System.out.println("[" + hilo + "] Solicitud rechazada para "
-                            + u.getNombre() + ": " + ex.getMessage());
+                } catch (EjemplarNoDisponibleException ex) {
+                    System.out.println("[" + hilo + "] Ejemplar ocupado (" + ex.getCodigoInventario() + ") para " + u.getNombre());
+                } catch(UsuarioInhabilitadoException | EstadoOperacionException | IllegalArgumentException ex) {
+                    System.out.println("[" + hilo + "] Solicitud rechazada para "+ u.getNombre() + ": " + ex.getMessage());
                 }
             });
         }
@@ -154,7 +158,7 @@ public class SIBLIO {
                 try{
                     bibliotecario.registrarDevolucion(prestamo);
                     System.out.println("[" + hilo + "] Intento #" + intento + ": Devolución registrada. Estado: " + prestamo.getEstado());
-                } catch(IllegalStateException | IllegalArgumentException ex){
+                } catch(EstadoOperacionException | IllegalArgumentException ex){
                     System.out.println("[" + hilo + "] Intento #" + intento+ " rechazado: " + ex.getMessage());
                 }
             });
@@ -184,7 +188,7 @@ public class SIBLIO {
                 try {
                     Reserva r = u.reservarMaterial(material, 4);
                     System.out.println("[" + hilo + "] Reserva #" + r.getIdReserva() + " creada para " + u.getNombre()+ " sobre " + material.getTitulo());
-                } catch(IllegalStateException | IllegalArgumentException ex){
+                } catch(UsuarioInhabilitadoException | IllegalArgumentException ex){
                     System.out.println("[" + hilo + "] Reserva rechazada para "+ u.getNombre() + ": " + ex.getMessage());
                 }
             });

@@ -18,15 +18,14 @@ public class Libro extends Publicacion {
         setCategoria(categoria);
     }
 
-    public void registrarLibro() {
+    public void registrarLibro() throws EstadoOperacionException{
         if (getTitulo() == null || getTitulo().trim().isEmpty()
                 || getAutor() == null || getAutor().trim().isEmpty()) {
-            throw new IllegalStateException("El libro debe tener título y autor.");
+            throw new EstadoOperacionException("El libro debe tener título y autor.");
         }
     }
 
-    public void actualizarInformacion(String titulo, String autor, String editorial,
-                                      int anioPublicacion, String categoria) {
+    public void actualizarInformacion(String titulo, String autor, String editorial, int anioPublicacion, String categoria) {
         setTitulo(titulo);
         setAutor(autor);
         setEditorial(editorial);

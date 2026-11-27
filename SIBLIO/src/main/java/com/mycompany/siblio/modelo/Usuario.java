@@ -46,11 +46,11 @@ public class Usuario extends Persona {
         }
         this.limitePrestamos = limitePrestamos;
     }
-    public Prestamo solicitarPrestamo(Ejemplar ejemplar) { 
+    public Prestamo solicitarPrestamo(Ejemplar ejemplar) throws UsuarioInhabilitadoException, EjemplarNoDisponibleException { 
         return solicitarPrestamo(ejemplar, Prestamo.DIAS_PRESTAMO); 
     }
     
-    public Prestamo solicitarPrestamo(Ejemplar ejemplar, int dias){
+    public Prestamo solicitarPrestamo(Ejemplar ejemplar, int dias) throws UsuarioInhabilitadoException, EjemplarNoDisponibleException{
         if(ejemplar==null){
             throw new IllegalArgumentException("Debe seleccionar un ejemplar.");
         }
@@ -58,31 +58,31 @@ public class Usuario extends Persona {
             throw new IllegalArgumentException("Los días de préstamo deben ser al menos 1.");
         }
         if(getEstado() != EstadoPersona.ACTIVO){
-            throw new IllegalStateException("El usuario debe estar activo para solicitar prestamos.");
+            throw new UsuarioInhabilitadoException(getNombre(), " debe estar activo para solicitar prestamos.");
         }
         if(prestamosActivos()>= limitePrestamos){
-            throw new IllegalStateException("El usuario alcanzó el limite de prestamos activos.");
+            throw new UsuarioInhabilitadoException(getNombre(), " alcanzó el limite de prestamos activos.");
         }
         if(multasPendientes()){
-            throw new IllegalStateException("El usuario cuenta con multas pendientes");
+            throw new UsuarioInhabilitadoException(getNombre(), " cuenta con multas pendientes");
         }
         if(!ejemplar.consultarDisponibilidad()){
-            throw new IllegalStateException("El ejemplar "+ ejemplar.getCodigoInventario() + " no se encuentra disponible.");
+            throw new EjemplarNoDisponibleException(ejemplar.getCodigoInventario());
         }
         return new Prestamo(this, ejemplar, dias);
     }
     
-    public Reserva reservarMaterial(Material material){
+    public Reserva reservarMaterial(Material material) throws UsuarioInhabilitadoException{
         return reservarMaterial(material, 3);
     }
     
-    public Reserva reservarMaterial(Material material, int diasVigencia){
+    public Reserva reservarMaterial(Material material, int diasVigencia) throws UsuarioInhabilitadoException{
         if(material == null){
             throw new IllegalArgumentException("Debe indicar un material para reservar");
         }
         synchronized(material){
             if (!puedeSolicitarPrestamo()) {
-                throw new IllegalStateException("El usuario no está habilitado para realizar reservas");
+                throw new UsuarioInhabilitadoException(getNombre(), " no está habilitado para realizar reservas");
         }
         Reserva reserva = new Reserva(this, material, diasVigencia);
         reservas.add(reserva);
@@ -90,7 +90,7 @@ public class Usuario extends Persona {
         }
     }
     
-    public void pagarMulta(Multa m){
+    public void pagarMulta(Multa m) throws EstadoOperacionException{
         if(m==null){
             throw new IllegalArgumentException("Debe de indicar la multa a pagar.");
         }

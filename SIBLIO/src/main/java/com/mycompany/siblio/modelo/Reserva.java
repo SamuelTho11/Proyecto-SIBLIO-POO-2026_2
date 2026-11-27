@@ -97,16 +97,16 @@ public class Reserva {
         this.material = material;
     }
     
-    public void confirmarReserva() { 
+    public void confirmarReserva() throws EstadoOperacionException{ 
         if (estado != EstadoReserva.ACTIVA) { 
-            throw new IllegalStateException("Solo se puede confirmar una reserva activa."); 
+            throw new EstadoOperacionException("Solo se puede confirmar una reserva activa."); 
         } 
         this.estado = EstadoReserva.CUMPLIDA; 
     }
     
-    public void cancelarReserva() { 
+    public void cancelarReserva() throws EstadoOperacionException { 
         if (estado != EstadoReserva.ACTIVA) { 
-            throw new IllegalStateException("Solo se puede cancelar una reserva activa."); 
+            throw new EstadoOperacionException("Solo se puede cancelar una reserva activa."); 
         } 
         this.estado = EstadoReserva.CANCELADA; 
     }

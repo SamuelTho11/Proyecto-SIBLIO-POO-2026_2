@@ -42,31 +42,22 @@ public class Prestamo {
         this.estado = EstadoPrestamo.SOLICITADO;
     }
     
-    public void crearPrestamo(){
+    public void crearPrestamo() throws EstadoOperacionException, UsuarioInhabilitadoException, EjemplarNoDisponibleException{
         
         if (estado != EstadoPrestamo.SOLICITADO) {
-            throw new IllegalStateException(
-                "Solo se puede crear un préstamo en estado SOLICITADO."
-            );
+            throw new EstadoOperacionException("Solo se puede crear un préstamo en estado SOLICITADO.");
         }
 
         if (bibliotecario == null) {
-            throw new IllegalStateException(
-                "El préstamo debe estar asignado a un bibliotecario."
-            );
+            throw new EstadoOperacionException("El préstamo debe estar asignado a un bibliotecario.");
         }
 
         if (!usuario.puedeSolicitarPrestamo()) {
-            throw new IllegalStateException(
-                "El usuario ya no cumple las condiciones para el préstamo."
-            );
+            throw new UsuarioInhabilitadoException(usuario.getNombre()," ya no cumple las condiciones para el préstamo.");
         }
 
         if (!ejemplar.consultarDisponibilidad()) {
-            throw new IllegalStateException(
-                "El ejemplar " + ejemplar.getCodigoInventario() +
-                " no está disponible."
-            );
+            throw new EjemplarNoDisponibleException(ejemplar.getCodigoInventario());
         }
 
         this.fechaPrestamo = LocalDate.now();
@@ -77,11 +68,9 @@ public class Prestamo {
         usuario.agregarPrestamo(this);
     }
     
-    public void registrarDevolucion() {
+    public void registrarDevolucion() throws EstadoOperacionException{
         if (estado != EstadoPrestamo.ACTIVO) {
-            throw new IllegalStateException(
-                "Solo se puede devolver un préstamo activo."
-            );
+            throw new EstadoOperacionException("Solo se puede devolver un préstamo activo.");
         }
 
         this.fechaDevolucionReal = LocalDate.now();
@@ -92,12 +81,7 @@ public class Prestamo {
         double monto = calcularMulta();
 
         if (monto > 0) {
-            this.multa = new Multa(
-                idPrestamo,
-                monto,
-                "Retraso en la devolución"
-            );
-
+            this.multa = new Multa(idPrestamo, monto, "Retraso en la devolución");
             this.multa.generarMulta();
         }
     }

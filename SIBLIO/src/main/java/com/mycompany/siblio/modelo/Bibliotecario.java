@@ -38,9 +38,9 @@ public class Bibliotecario extends Persona {
         this.cargo = cargo;
     }
     
-    public Prestamo registrarPrestamo(Prestamo solicitud){
+    public Prestamo registrarPrestamo(Prestamo solicitud)throws EstadoOperacionException, UsuarioInhabilitadoException, EjemplarNoDisponibleException{
         if(getEstado() != EstadoPersona.ACTIVO){
-            throw new IllegalStateException("El bibliotecario debe estar activo para registrar prestamos.");
+            throw new EstadoOperacionException("El bibliotecario debe estar activo para registrar prestamos.");
         }
         if(solicitud == null || solicitud.getEstado() != EstadoPrestamo.SOLICITADO){
             throw new IllegalArgumentException("Debe indicar un prestamo en estado 'solicitado'.");
@@ -52,9 +52,9 @@ public class Bibliotecario extends Persona {
         return solicitud;
     }
     
-    public void registrarDevolucion(Prestamo prestamo){
+    public void registrarDevolucion(Prestamo prestamo) throws EstadoOperacionException{
         if(getEstado() != EstadoPersona.ACTIVO){
-            throw new IllegalStateException("El bibliotecario debe estar activo para registrar devoluciones.");
+            throw new EstadoOperacionException("El bibliotecario debe estar activo para registrar devoluciones.");
         }
         if(prestamo == null){
             throw new IllegalArgumentException("Debe de indicar el prestamo a devolver.");
@@ -64,9 +64,9 @@ public class Bibliotecario extends Persona {
         }
     }
     
-    public void gestionarInventario(Material material, String codigoInventario, String ubicacion){
+    public void gestionarInventario(Material material, String codigoInventario, String ubicacion) throws EstadoOperacionException{
         if(getEstado() != EstadoPersona.ACTIVO){
-            throw new IllegalStateException("El bibliotecario debe estar activo para gestionar inventario.");
+            throw new EstadoOperacionException("El bibliotecario debe estar activo para gestionar inventario.");
         }
         if(material==null){
             throw new IllegalArgumentException("Debe de indicar el libro a gestionar.");
